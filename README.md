@@ -169,6 +169,4 @@ git commit -m "Update task status: [task name] done"
 git push
 ```
 
-## License
 
-MIT License - University of Luxembourg, 2024-2025
