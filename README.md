@@ -4,7 +4,7 @@ A smart room recommendation system using AHP algorithm, FastAPI, React, and Mong
 
 ## Quick Links
 
-- [Project Tracker (Gantt Chart)](https://fede-oss.github.io/iot/)
+- [Project Tracker (Gantt Chart)](https://filzek04.github.io/IOT_room_selection-/)
 - [API Documentation (Swagger)](http://localhost:8000/docs) — run `docker-compose up` then open link
 - [Grafana Dashboard](http://localhost:3000) — run `docker-compose --profile dev up` then open link (admin/admin123)
 

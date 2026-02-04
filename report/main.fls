@@ -1,8 +1,8 @@
-PWD /Users/as/BiCS/Semester_5/projects/iot_final/iot/report
+PWD /Users/fede/IOT_room_selection-/report
 INPUT /usr/local/texlive/2025/texmf.cnf
 INPUT /usr/local/texlive/2025/texmf-dist/web2c/texmf.cnf
 INPUT /usr/local/texlive/2025/texmf-var/web2c/pdftex/pdflatex.fmt
-INPUT /Users/as/BiCS/Semester_5/projects/iot_final/iot/report/main.tex
+INPUT /Users/fede/IOT_room_selection-/report/main.tex
 OUTPUT main.log
 INPUT /usr/local/texlive/2025/texmf-dist/tex/latex/base/article.cls
 INPUT /usr/local/texlive/2025/texmf-dist/tex/latex/base/article.cls
