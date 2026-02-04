@@ -12,9 +12,9 @@ A smart room recommendation system using AHP algorithm, FastAPI, React, and Mong
 
 | Role | Member | Responsibilities |
 |------|--------|------------------|
-| Backend/Database | Anthony | FastAPI, MongoDB, REST APIs, Swagger |
-| Algorithm/Data | Fede | AHP implementation, EU standards research |
-| Frontend/UI | Filip | React UI, Grafana dashboard |
+| Backend/Database | Anthony | FastAPI, MongoDB, REST APIs |
+| Algorithm/Data | Fede | AHP implementation, EU standards research, JWT |
+| Frontend/UI | Filip | React UI, Grafana dashboard, Hardware |
 
 ## Tech Stack
 
