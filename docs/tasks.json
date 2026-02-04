@@ -403,7 +403,7 @@
       "epic": "Documentation",
       "start": 27,
       "duration": 2,
-      "status": "inprogress",
+      "status": "done",
       "notes": "Project report, presentation, and submission",
       "dependencies": [35]
     },
