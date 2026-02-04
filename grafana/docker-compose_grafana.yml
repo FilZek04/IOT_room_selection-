@@ -1,0 +1,66 @@
+services:
+  grafana:
+    image: grafana/grafana:latest
+    container_name: iot-room-grafana
+    restart: unless-stopped
+
+    # Ports
+    ports:
+      - "3000:3000"  # Grafana web interface
+
+    # Environment variables
+    environment:
+      # Admin credentials (CHANGE IN PRODUCTION!)
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=mibombo
+
+      # Install Infinity plugin for JSON API data sources
+      - GF_INSTALL_PLUGINS=yesoreyeram-infinity-datasource
+
+      # Server settings
+      - GF_SERVER_ROOT_URL=http://localhost:3000
+      - GF_SERVER_SERVE_FROM_SUB_PATH=false
+
+      # Anonymous access (disable in production)
+      - GF_AUTH_ANONYMOUS_ENABLED=false
+
+      # Disable telemetry
+      - GF_ANALYTICS_REPORTING_ENABLED=false
+      - GF_ANALYTICS_CHECK_FOR_UPDATES=false
+
+      # Enable provisioning
+      - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
+
+    # Volumes
+    volumes:
+      # Persistent data storage
+      - grafana-data:/var/lib/grafana
+
+      # Provisioning configurations
+      - ./provisioning/datasources:/etc/grafana/provisioning/datasources
+      - ./provisioning/dashboards:/etc/grafana/provisioning/dashboards
+
+      # Dashboard JSON files
+      - ./dashboards:/var/lib/grafana/dashboards
+
+    # Networks
+    networks:
+      - iot-network
+
+    # Health check
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:3000/api/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+# Volumes
+volumes:
+  grafana-data:
+    driver: local
+
+# Networks
+networks:
+  iot-network:
+    driver: bridge

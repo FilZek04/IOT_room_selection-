@@ -1,0 +1,74 @@
+# Grafana Data Source Provisioning
+# This file automatically configures data sources when Grafana starts
+
+apiVersion: 1
+
+# Delete existing data sources before adding new ones
+deleteDatasources:
+  - name: FastAPI
+    orgId: 1
+
+# Data sources to add
+datasources:
+  # FastAPI Backend Data Source
+  - name: FastAPI
+    type: yesoreyeram-infinity-datasource
+    access: proxy
+    orgId: 1
+    uid: fastapi-datasource
+    isDefault: true
+    version: 1
+    editable: true
+
+    # JSON API configuration
+    jsonData:
+      url: http://host.docker.internal:8000
+      tlsSkipVerify: true
+      # Allowed hosts for security
+      allowedHosts:
+        - host.docker.internal:8000
+        - host.docker.internal
+        - localhost:8000
+        - http://host.docker.internal:8000
+        - http://localhost:8000
+      # Authentication settings
+      authType: token
+      tokenType: Bearer
+      tokenHeaderName: Authorization
+
+    # Secure settings - JWT Bearer token for FastAPI authentication
+    secureJsonData:
+      token: '635f1c22465b15b4baede6305a253a4d0b57ce4f32d1111e9d565a990d5f77f7'
+
+  # Alternative: JSON API Plugin (if using SimpleJson)
+  - name: IoT Rooms API
+    type: simplejson
+    access: proxy
+    url: http://host.docker.internal:8000/api/grafana
+    isDefault: false
+    version: 1
+    editable: true
+    jsonData:
+      tlsSkipVerify: true
+
+  # TestData DB (for testing/demo purposes)
+  - name: TestData DB
+    type: testdata
+    orgId: 1
+    uid: testdata
+    isDefault: false
+    version: 1
+    editable: false
+    jsonData:
+      scenarioId: random_walk
+
+# Note: If using MongoDB directly (requires MongoDB data source plugin)
+# - name: MongoDB
+#   type: grafana-mongodb-datasource
+#   access: proxy
+#   url: mongodb://host.docker.internal:27017
+#   database: iot_rooms
+#   jsonData:
+#     authType: credentials
+#   secureJsonData:
+#     password: 'your-mongodb-password'

@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IoT Room Selection DSS — Presentation</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0f172a;
+    --surface: #1e293b;
+    --border: #334155;
+    --text: #f1f5f9;
+    --muted: #94a3b8;
+    --accent: #3b82f6;
+    --accent2: #8b5cf6;
+    --accent3: #10b981;
+    --accent4: #f59e0b;
+    --red: #ef4444;
+    --glow-blue: 0 0 30px rgba(59,130,246,0.2), 0 0 60px rgba(59,130,246,0.08);
+    --glow-purple: 0 0 30px rgba(139,92,246,0.2), 0 0 60px rgba(139,92,246,0.08);
+    --glow-green: 0 0 30px rgba(16,185,129,0.2), 0 0 60px rgba(16,185,129,0.08);
+    --glow-amber: 0 0 30px rgba(245,158,11,0.2), 0 0 60px rgba(245,158,11,0.08);
+  }
+
+  /* Fix scrollbar jitter: always hide scrollbar, lock to viewport */
+  html {
+    overflow: hidden;
+    height: 100%;
+  }
+  body {
+    height: 100%;
+    overflow: hidden;
+    font-family: 'Inter', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+  }
+
+  /* --- Slide system --- */
+  .slide {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    height: 100vh;
+    padding: 4rem 6rem;
+    position: relative;
+    overflow: hidden;
+    animation: fadeIn 0.35s ease;
+  }
+  .slide.active { display: flex; }
+  .slide.dense { padding-top: 2.5rem; padding-bottom: 3rem; }
+  .slide.dense h2 { margin-bottom: 1.2rem; }
+  .slide.ui1 { padding-top: 4.5rem; }
+  .slide.ui1 h2 { font-size: 1.9rem; line-height: 1.2; margin-top: 0.5rem; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* --- Typography --- */
+  h1 { font-size: 3rem; font-weight: 700; line-height: 1.15; letter-spacing: -0.02em; }
+  h2 { font-size: 2.4rem; font-weight: 600; line-height: 1.2; letter-spacing: -0.01em; margin-bottom: 2rem; }
+  h3 { font-size: 1.3rem; font-weight: 500; color: var(--muted); margin-bottom: 0.5rem; }
+  p, li { font-size: 1.25rem; line-height: 1.7; color: var(--muted); }
+  li { margin-bottom: 0.6rem; }
+  ul { list-style: none; padding-left: 0; }
+  ul li::before { content: "—"; color: var(--accent); margin-right: 0.75rem; font-weight: 600; }
+  strong { color: var(--text); font-weight: 600; }
+  .accent { color: var(--accent); }
+  .accent2 { color: var(--accent2); }
+  .accent3 { color: var(--accent3); }
+  .accent4 { color: var(--accent4); }
+
+  /* --- Layout helpers --- */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; }
+  .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2rem; }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    padding: 2rem;
+  }
+  .card.glow-blue { border-color: var(--accent); box-shadow: var(--glow-blue); }
+  .card.glow-purple { border-color: var(--accent2); box-shadow: var(--glow-purple); }
+  .card.glow-green { border-color: var(--accent3); box-shadow: var(--glow-green); }
+  .card.glow-amber { border-color: var(--accent4); box-shadow: var(--glow-amber); }
+  .card h3 { color: var(--text); font-size: 1.15rem; margin-bottom: 0.75rem; }
+  .card p, .card li { font-size: 1.05rem; }
+
+  .tag {
+    display: inline-block;
+    padding: 0.3rem 0.9rem;
+    border-radius: 999px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-right: 0.4rem;
+    margin-bottom: 0.5rem;
+  }
+  .tag-blue { background: rgba(59,130,246,0.15); color: var(--accent); }
+  .tag-purple { background: rgba(139,92,246,0.15); color: var(--accent2); }
+  .tag-green { background: rgba(16,185,129,0.15); color: var(--accent3); }
+  .tag-amber { background: rgba(245,158,11,0.15); color: var(--accent4); }
+
+  /* --- Diagram boxes --- */
+  .arch-flow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    margin: 2.5rem 0;
+    flex-wrap: wrap;
+  }
+  .arch-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 0.75rem;
+    padding: 1.25rem 1.75rem;
+    text-align: center;
+    min-width: 140px;
+  }
+  .arch-box .label { font-size: 0.85rem; color: var(--muted); margin-bottom: 0.3rem; }
+  .arch-box .name { font-size: 1.15rem; font-weight: 600; color: var(--text); }
+  .arch-arrow { font-size: 1.8rem; color: var(--accent); font-weight: 300; }
+  .arch-box.glow { border-color: var(--accent); box-shadow: var(--glow-blue); }
+  .arch-box.glow-purple { border-color: var(--accent2); box-shadow: var(--glow-purple); }
+  .arch-box.glow-green { border-color: var(--accent3); box-shadow: var(--glow-green); }
+  .arch-box.glow-amber { border-color: var(--accent4); box-shadow: var(--glow-amber); }
+
+  /* --- Table --- */
+  table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+  th, td { text-align: left; padding: 0.85rem 1.2rem; font-size: 1.1rem; border-bottom: 1px solid var(--border); }
+  th { color: var(--muted); font-weight: 500; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; }
+  td { color: var(--text); }
+
+  /* --- Footer --- */
+  .slide-footer {
+    position: absolute;
+    bottom: 1.5rem;
+    left: 6rem;
+    right: 6rem;
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: var(--border);
+  }
+  .speaker-badge {
+    position: absolute;
+    top: 2rem;
+    right: 3rem;
+    padding: 0.4rem 1rem;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+  .speaker-anthony { background: rgba(59,130,246,0.15); color: var(--accent); }
+  .speaker-federico { background: rgba(139,92,246,0.15); color: var(--accent2); }
+  .speaker-filip { background: rgba(16,185,129,0.15); color: var(--accent3); }
+  .speaker-all { background: rgba(245,158,11,0.15); color: var(--accent4); }
+
+  /* --- Title slide special --- */
+  .title-slide { text-align: center; }
+  .title-slide h1 { font-size: 3.5rem; margin-bottom: 1rem; }
+  .title-slide .subtitle { font-size: 1.4rem; color: var(--muted); margin-bottom: 2.5rem; }
+  .title-slide .authors { font-size: 1.15rem; color: var(--accent); }
+  .title-slide .meta { font-size: 0.95rem; color: var(--border); margin-top: 1.5rem; }
+
+  /* --- Screenshot placeholder --- */
+  .screenshot-placeholder {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    padding: 0;
+    text-align: center;
+    color: var(--border);
+    font-size: 1rem;
+    margin-top: 1rem;
+    overflow: hidden;
+  }
+  .screenshot-placeholder img {
+    display: block;
+    max-width: 100%;
+    max-height: 440px;
+    width: 100%;
+    border-radius: 0;
+    object-fit: contain;
+  }
+  .screenshot-placeholder small {
+    display: block;
+    padding: 0.4rem 0.75rem;
+  }
+  .screenshot-placeholder.compact {
+    padding: 0;
+  }
+  .screenshot-placeholder.compact img {
+    max-height: 220px;
+  }
+  .screenshot-placeholder.grid-two {
+    display: grid;
+    gap: 0.5rem;
+    padding: 0.5rem;
+  }
+  .screenshot-placeholder.large img {
+    max-height: 520px;
+  }
+  .screenshot-placeholder.full img {
+    width: 100%;
+    max-height: 520px;
+    object-fit: contain;
+  }
+  .screenshot-placeholder.full { padding: 0; }
+
+  /* --- Progress bar --- */
+  #progress { position: fixed; top: 0; left: 0; height: 3px; background: var(--accent); transition: width 0.3s ease; z-index: 100; }
+
+  /* --- Nav hint (fades out) --- */
+  .nav-hint {
+    position: fixed;
+    bottom: 1rem;
+    right: 2rem;
+    font-size: 0.75rem;
+    color: var(--border);
+    transition: opacity 2s ease;
+  }
+  .nav-hint.hidden { opacity: 0; pointer-events: none; }
+
+  /* --- Hierarchy tree (bigger) --- */
+  .tree { text-align: center; margin: 2rem 0; }
+  .tree-level { display: flex; justify-content: center; gap: 1.25rem; margin-bottom: 0.75rem; flex-wrap: wrap; }
+  .tree-node {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 0.75rem;
+    padding: 0.75rem 1.5rem;
+    font-size: 1.05rem;
+    font-weight: 500;
+  }
+  .tree-node.root { border-color: var(--accent); color: var(--accent); box-shadow: var(--glow-blue); font-size: 1.2rem; padding: 0.9rem 2rem; }
+  .tree-node.glow-blue { border-color: var(--accent); box-shadow: var(--glow-blue); }
+  .tree-node.glow-purple { border-color: var(--accent2); box-shadow: var(--glow-purple); }
+  .tree-node.glow-green { border-color: var(--accent3); box-shadow: var(--glow-green); }
+  .tree-node.glow-amber { border-color: var(--accent4); box-shadow: var(--glow-amber); }
+  .tree-connector { color: var(--border); font-size: 1.4rem; margin: 0.3rem 0; }
+
+  /* Pipeline (bigger) */
+  .pipeline {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    margin: 2.5rem 0;
+    flex-wrap: wrap;
+  }
+  .pipeline-step {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 0.75rem;
+    padding: 1rem 1.5rem;
+    text-align: center;
+    font-size: 1rem;
+  }
+  .pipeline-step.glow { border-color: var(--accent); box-shadow: var(--glow-blue); }
+  .pipeline-step.glow-purple { border-color: var(--accent2); box-shadow: var(--glow-purple); }
+  .pipeline-step.glow-green { border-color: var(--accent3); box-shadow: var(--glow-green); }
+  .pipeline-step.glow-amber { border-color: var(--accent4); box-shadow: var(--glow-amber); }
+  .pipeline-step .step-label { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; margin-bottom: 0.25rem; }
+  .pipeline-step .step-name { font-weight: 600; color: var(--text); }
+
+  /* Fullscreen hint */
+  .fs-hint {
+    position: fixed;
+    bottom: 1rem;
+    left: 2rem;
+    font-size: 0.75rem;
+    color: var(--border);
+    transition: opacity 4s ease;
+  }
+  .fs-hint.hidden { opacity: 0; pointer-events: none; }
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+<div class="nav-hint" id="navHint">Arrow keys or click to navigate</div>
+<div class="fs-hint" id="fsHint">Press Cmd+Shift+F for fullscreen (Arc) or F11</div>
+
+<!-- ==================== SLIDE 1: TITLE ==================== -->
+<div class="slide active title-slide" id="s1">
+  <h1>IoT Room Selection<br>Decision Support System</h1>
+  <p class="subtitle">Architectural Design & Justification</p>
+  <p class="authors">Anthony Stassart &nbsp;&middot;&nbsp; Federico Newton &nbsp;&middot;&nbsp; Filip Zekonja</p>
+  <p class="meta">BPINFOR-124 &mdash; Introduction to IoT &nbsp;|&nbsp; University of Luxembourg &nbsp;|&nbsp; January 2026</p>
+</div>
+
+<!-- ==================== SLIDE 2: AGENDA ==================== -->
+<div class="slide" id="s2">
+  <h2>Agenda</h2>
+  <div class="two-col">
+    <div>
+      <ul>
+        <li><strong>Team & Timeline</strong> &mdash; who did what, Gantt overview</li>
+        <li><strong>System Architecture</strong> &mdash; the big picture</li>
+        <li><strong>Communication Protocols</strong> &mdash; Comm A through E</li>
+        <li><strong>Database Design</strong> &mdash; why MongoDB</li>
+      </ul>
+    </div>
+    <div>
+      <ul>
+        <li><strong>Decision Criteria</strong> &mdash; EU standards</li>
+        <li><strong>AHP Algorithm</strong> &mdash; scoring & ranking</li>
+        <li><strong>REST API & Swagger</strong></li>
+        <li><strong>User Interfaces</strong> &mdash; UI1 & UI2</li>
+        <li><strong>Bonus</strong> &mdash; JWT authentication</li>
+      </ul>
+    </div>
+  </div>
+  <div class="slide-footer"><span>Agenda</span><span></span></div>
+</div>
+
+<!-- ==================== SLIDE 3: TEAM ==================== -->
+<div class="slide" id="s3">
+  <span class="speaker-badge speaker-filip">Filip</span>
+  <h2>Team Organization</h2>
+  <div class="three-col">
+    <div class="card glow-blue">
+      <h3><span class="accent">Anthony</span></h3>
+      <p style="margin-bottom:1.2rem;">Backend & Database</p>
+      <span class="tag tag-blue">FastAPI</span>
+      <span class="tag tag-blue">MongoDB</span>
+      <span class="tag tag-blue">REST APIs</span>
+      <span class="tag tag-blue">Docker</span>
+    </div>
+    <div class="card glow-purple">
+      <h3><span class="accent2">Federico</span></h3>
+      <p style="margin-bottom:1.2rem;">Algorithm & Data</p>
+      <span class="tag tag-purple">AHP Engine</span>
+      <span class="tag tag-purple">EU Standards</span>
+      <span class="tag tag-purple">JWT Auth</span>
+      <span class="tag tag-purple">Unit Tests</span>
+    </div>
+    <div class="card glow-green">
+      <h3><span class="accent3">Filip</span></h3>
+      <p style="margin-bottom:1.2rem;">Frontend & Monitoring</p>
+      <span class="tag tag-green">React UI</span>
+      <span class="tag tag-green">Grafana</span>
+      <span class="tag tag-green">Swagger UI</span>
+      <span class="tag tag-green">UI/UX Design</span>
+      <span class="tag tag-green">Hardware</span>
+    </div>
+  </div>
+  <p style="margin-top:2.5rem; text-align:center;">Each member owned a <strong>vertical slice</strong>; integration points (API contracts, data formats) were designed collaboratively.</p>
+  <div class="slide-footer"><span>Team</span><span>1 / 18</span></div>
+</div>
+
+<!-- ==================== SLIDE 4: GANTT ==================== -->
+<div class="slide" id="s4">
+  <span class="speaker-badge speaker-federico">Federico</span>
+  <h2>Project Timeline</h2>
+  <div class="two-col">
+    <div>
+      <h3>6 weeks &nbsp;&middot;&nbsp; 9 epics &nbsp;&middot;&nbsp; 36 tasks</h3>
+      <ul>
+        <li><strong>Weeks 1&ndash;2</strong> &mdash; Architecture, research, protocols, DB setup</li>
+        <li><strong>Weeks 3&ndash;4</strong> &mdash; AHP algorithm, REST API development</li>
+        <li><strong>Week 5</strong> &mdash; Frontend UI, Grafana dashboards</li>
+        <li><strong>Week 6</strong> &mdash; Integration, testing, documentation</li>
+      </ul>
+      <p style="margin-top:1.5rem;">Holiday break (Dec 20&ndash;31) planned from the start.<br><strong>All 36 tasks completed on schedule.</strong></p>
+    </div>
+    <div>
+      <div class="screenshot-placeholder compact grid-two">
+        <img src="../screenshots%20presentation/gantt1.png" alt="Gantt chart overview">
+        <img src="../screenshots%20presentation/gantt2.png" alt="Gantt chart details">
+        <small>from <a href="https://fede-oss.github.io/iot/" style="color:var(--accent)">fede-oss.github.io/iot</a></small>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer"><span>Timeline</span><span>2 / 18</span></div>
+</div>
+
+<!-- ==================== SLIDE 5: ARCHITECTURE OVERVIEW ==================== -->
+<div class="slide" id="s5">
+  <span class="speaker-badge speaker-anthony">Anthony</span>
+  <h2>System Architecture</h2>
+  <div class="arch-flow" style="gap:1rem; margin:3rem 0;">
+    <div class="arch-box">
+      <div class="label">Sensors</div>
+      <div class="name">I&sup2;C / Analog</div>
+    </div>
+    <div class="arch-arrow">&xrarr;</div>
+    <div class="arch-box">
+      <div class="label">Comm A</div>
+      <div class="name">Arduino</div>
+    </div>
+    <div class="arch-arrow">&xrarr;</div>
+    <div class="arch-box glow-purple">
+      <div class="label">Comm B &middot; MQTT</div>
+      <div class="name">Broker</div>
+    </div>
+    <div class="arch-arrow">&xrarr;</div>
+    <div class="arch-box glow">
+      <div class="label">Comm C &middot; HTTP</div>
+      <div class="name">Raspberry Pi</div>
+    </div>
+    <div class="arch-arrow">&xrarr;</div>
+    <div class="arch-box glow">
+      <div class="label">Database</div>
+      <div class="name">MongoDB 4.4</div>
+    </div>
+    <div class="arch-arrow">&xrarr;</div>
+    <div class="arch-box glow">
+      <div class="label">Comm E &middot; REST</div>
+      <div class="name">FastAPI</div>
+    </div>
+    <div class="arch-arrow">&xrarr;</div>
+    <div class="arch-box glow-green">
+      <div class="label">Comm D</div>
+      <div class="name">React / Grafana</div>
+    </div>
+  </div>
+  <p style="text-align:center; margin-top:1.5rem; font-size:1.3rem;">Three-tier architecture &mdash; all services orchestrated via <strong>Docker Compose</strong> on a private network.</p>
+  <div class="slide-footer"><span>Architecture</span><span>3 / 20</span></div>
+</div>
+
+<!-- ==================== SLIDE 6: HARDWARE ARCHITECTURE (NEW) ==================== -->
+<div class="slide" id="s6">
+  <span class="speaker-badge speaker-filip">Filip</span>
+  <h2>Hardware Architecture</h2>
+  <div class="two-col" style="gap:2.5rem;">
+    <div class="card glow-blue">
+      <h3 style="font-size:1.25rem; margin-bottom:1.25rem;"><span class="accent">Sensor Node</span> (per room)</h3>
+      <ul style="list-style:none; padding:0;">
+        <li style="font-size:1.05rem; margin-bottom:0.6rem;"><strong>Arduino Uno R3</strong> &mdash; 8-bit MCU, 32KB flash</li>
+        <li style="font-size:1.05rem; margin-bottom:0.6rem;"><strong>Ethernet Shield 2</strong> &mdash; W5500 chipset</li>
+        <li style="font-size:1.05rem; margin-bottom:0.6rem;"><strong>Grove Base Shield v2</strong> &mdash; plug-and-play connectors</li>
+        <li style="font-size:1.05rem; margin-bottom:0.6rem;"><strong>DHT11</strong> &mdash; Temperature &amp; Humidity (±2°C)</li>
+        <li style="font-size:1.05rem; margin-bottom:0.6rem;"><strong>Grove Sound v1.6</strong> &mdash; Noise level</li>
+        <li style="font-size:1.05rem; margin-bottom:0.6rem;"><strong>Grove Light v1.2</strong> &mdash; Ambient light</li>
+        <li style="font-size:1.05rem; margin-bottom:0.6rem;"><strong>Grove Air Quality v1.3</strong> &mdash; VOC detection</li>
+        <li style="font-size:1.05rem;"><strong>Grove LCD RGB</strong> &mdash; Local display</li>
+      </ul>
+    </div>
+    <div>
+      <div class="card glow-purple" style="margin-bottom:1.5rem;">
+        <h3 style="font-size:1.25rem; margin-bottom:1rem;"><span class="accent2">Coordinator</span></h3>
+        <ul style="list-style:none; padding:0;">
+          <li style="font-size:1.05rem; margin-bottom:0.5rem;"><strong>Raspberry Pi 4</strong> (4GB RAM)</li>
+          <li style="font-size:1.05rem; margin-bottom:0.5rem;"><strong>Mosquitto MQTT</strong> broker</li>
+          <li style="font-size:1.05rem; margin-bottom:0.5rem;"><strong>MongoDB 4.4</strong> (ARM-compatible)</li>
+          <li style="font-size:1.05rem;"><strong>FastAPI</strong> backend</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer"><span>Hardware</span><span>4 / 20</span></div>
+</div>
+
+<!-- ==================== SLIDE 7: COMM PROTOCOLS ==================== -->
+<div class="slide" id="s7">
+  <span class="speaker-badge speaker-anthony">Anthony</span>
+  <h2>Communication Protocols</h2>
+  <table style="font-size:1.15rem;">
+    <thead>
+      <tr><th>Layer</th><th>Protocol</th><th>Path</th><th>Why</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong class="accent">Comm A</strong></td>
+        <td>I&sup2;C / Analog</td>
+        <td>Sensor &rarr; Arduino</td>
+        <td>Low-power, short-range bus for environmental sensors</td>
+      </tr>
+      <tr>
+        <td><strong class="accent2">Comm B</strong></td>
+        <td>MQTT</td>
+        <td>Arduino &rarr; Broker</td>
+        <td>Lightweight pub/sub, minimal bandwidth, QoS guarantees</td>
+      </tr>
+      <tr>
+        <td><strong class="accent">Comm C</strong></td>
+        <td>HTTP</td>
+        <td>Broker &rarr; Database</td>
+        <td>Reliable ingestion into MongoDB via FastAPI</td>
+      </tr>
+      <tr>
+        <td><strong class="accent4">Comm D</strong></td>
+        <td>HTTP</td>
+        <td>Calendar API &rarr; DB</td>
+        <td>University agenda integration</td>
+      </tr>
+      <tr>
+        <td><strong class="accent3">Comm E</strong></td>
+        <td>REST API</td>
+        <td>Backend &harr; Clients</td>
+        <td>Standard web API + auto-generated Swagger docs</td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="slide-footer"><span>Protocols</span><span>5 / 20</span></div>
+</div>
+
+<!-- ==================== SLIDE 8: DATABASE ==================== -->
+<div class="slide" id="s8">
+  <span class="speaker-badge speaker-anthony">Anthony</span>
+  <h2>Database Design &mdash; Why MongoDB</h2>
+  <div class="two-col">
+    <div>
+      <ul>
+        <li><strong>Schema flexibility</strong> &mdash; sensor types have different fields; document model avoids rigid migrations</li>
+        <li><strong>Time-series fit</strong> &mdash; compound index on <code style="color:var(--accent)">(room, type, timestamp)</code> for fast range queries</li>
+        <li><strong>Async driver</strong> &mdash; Motor integrates natively with FastAPI's async request handling</li>
+      </ul>
+    </div>
+    <div>
+      <div class="card glow-blue">
+        <h3>4 Collections</h3>
+        <table style="margin-top:0.5rem;">
+          <tr><td><code style="color:var(--accent)">sensor_readings</code></td><td style="color:var(--muted)">Time-series data</td></tr>
+          <tr><td><code style="color:var(--accent)">rooms</code></td><td style="color:var(--muted)">Metadata & facilities</td></tr>
+          <tr><td><code style="color:var(--accent)">calendar_events</code></td><td style="color:var(--muted)">Bookings</td></tr>
+          <tr><td><code style="color:var(--accent)">users</code></td><td style="color:var(--muted)">Auth accounts</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer"><span>Database</span><span>6 / 20</span></div>
+</div>
+
+<!-- ==================== SLIDE 9: EU STANDARDS ==================== -->
+<div class="slide" id="s9">
+  <span class="speaker-badge speaker-federico">Federico</span>
+  <h2>Decision Criteria &mdash; EU Standards</h2>
+  <h3>Grounded in EN 16798-1 Category II, EN 12464-1, WHO 2021</h3>
+  <table style="font-size:1.05rem;">
+    <thead>
+      <tr><th>Parameter</th><th>Optimal</th><th>Acceptable</th><th>Standard</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Temperature</td><td>20&ndash;24 &deg;C (winter) / 23&ndash;26 &deg;C (summer)</td><td>18&ndash;27 &deg;C</td><td>EN 16798-1 Cat II</td></tr>
+      <tr><td>CO<sub>2</sub></td><td>&le; 800 ppm</td><td>&le; 1000 ppm</td><td>EN 16798-1 Cat II</td></tr>
+      <tr><td>Humidity</td><td>40&ndash;60 %</td><td>30&ndash;70 %</td><td>EN 16798-1</td></tr>
+      <tr><td>Noise</td><td>&le; 35 dBA</td><td>&le; 45 dBA</td><td>EN 16798-1 / WHO</td></tr>
+      <tr><td>Lighting</td><td>300&ndash;500 lux</td><td>200&ndash;750 lux</td><td>EN 12464-1</td></tr>
+      <tr><td>VOC</td><td>&le; 200 ppb</td><td>&le; 400 ppb</td><td>WELL Standard</td></tr>
+      <tr><td>PM2.5</td><td>&le; 15 &mu;g/m&sup3;</td><td>&le; 35 &mu;g/m&sup3;</td><td>WHO 2021</td></tr>
+      <tr><td>PM10</td><td>&le; 45 &mu;g/m&sup3;</td><td>&le; 75 &mu;g/m&sup3;</td><td>WHO 2021</td></tr>
+    </tbody>
+  </table>
+  <p style="margin-top:1.5rem;">Raw sensor values are <strong>mapped to a [0, 1] score</strong>: 1.0 in optimal range, 0.0 outside acceptable, linear interpolation between.</p>
+  <div class="slide-footer"><span>Criteria</span><span>7 / 20</span></div>
+</div>
+
+<!-- ==================== SLIDE 10: SCORE MAPPING VISUAL ==================== -->
+<div class="slide" id="s10">
+  <span class="speaker-badge speaker-federico">Federico</span>
+  <h2>Score Mapping &mdash; From Raw Data to Compliance</h2>
+  <div class="pipeline" style="gap:0.6rem; margin:3rem 0;">
+    <div class="pipeline-step">
+      <div class="step-label">Input</div>
+      <div class="step-name">Raw sensor<br>e.g. 21 &deg;C</div>
+    </div>
+    <div class="arch-arrow">&xrarr;</div>
+    <div class="pipeline-step glow-purple">
+      <div class="step-label">Step 1</div>
+      <div class="step-name">Map to desired<br>profile</div>
+    </div>
+    <div class="arch-arrow">&xrarr;</div>
+    <div class="pipeline-step glow">
+      <div class="step-label">Step 2</div>
+      <div class="step-name">Compliance<br>score [0, 1]</div>
+    </div>
+    <div class="arch-arrow">&xrarr;</div>
+    <div class="pipeline-step glow-purple">
+      <div class="step-label">Step 3</div>
+      <div class="step-name">MCDM / AHP<br>Algorithm</div>
+    </div>
+    <div class="arch-arrow">&xrarr;</div>
+    <div class="pipeline-step glow-green">
+      <div class="step-label">Output</div>
+      <div class="step-name">Room<br>Ranking</div>
+    </div>
+  </div>
+  <p style="text-align:center; margin-top:2rem; font-size:1.3rem;">Profile defaults come from <strong>EU regulations</strong> but can be <strong>adjusted by the end-user</strong><br>(e.g., "I prefer rooms around 19 &deg;C").</p>
+  <div class="slide-footer"><span>Score Mapping</span><span>8 / 20</span></div>
+</div>
+
+<!-- ==================== SLIDE 11: AHP HIERARCHY ==================== -->
+<div class="slide" id="s11">
+  <span class="speaker-badge speaker-federico">Federico</span>
+  <h2>AHP &mdash; Three-Level Hierarchy</h2>
+  <div style="text-align:center; margin:1.5rem 0;">
+    <!-- Level 1: Goal -->
+    <div class="tree-node root" style="display:inline-block; margin-bottom:1rem;">Room Selection Goal</div>
+    <div class="tree-connector" style="font-size:2rem; margin:0.5rem 0;">&darr;</div>
+
+    <!-- Level 2: Main Criteria with grouped sub-criteria -->
+    <div style="display:flex; justify-content:center; gap:1.5rem; margin-top:1rem;">
+      <!-- Comfort Group -->
+      <div style="text-align:center;">
+        <div class="tree-node glow-blue" style="margin-bottom:0.75rem; font-size:1.1rem;">Comfort (40%)</div>
+        <div style="color:var(--accent); font-size:1.5rem; margin:0.3rem 0;">↓ ↓ ↓ ↓</div>
+        <div style="display:flex; flex-direction:column; gap:0.4rem; align-items:center;">
+          <div class="tree-node" style="padding:0.5rem 1rem; font-size:0.9rem; border-color:var(--accent);">Temperature</div>
+          <div class="tree-node" style="padding:0.5rem 1rem; font-size:0.9rem; border-color:var(--accent);">Lighting</div>
+          <div class="tree-node" style="padding:0.5rem 1rem; font-size:0.9rem; border-color:var(--accent);">Noise</div>
+          <div class="tree-node" style="padding:0.5rem 1rem; font-size:0.9rem; border-color:var(--accent);">Humidity</div>
+        </div>
+      </div>
+
+      <!-- Health Group -->
+      <div style="text-align:center;">
+        <div class="tree-node glow-purple" style="margin-bottom:0.75rem; font-size:1.1rem;">Health (35%)</div>
+        <div style="color:var(--accent2); font-size:1.5rem; margin:0.3rem 0;">↓ ↓ ↓ ↓ ↓</div>
+        <div style="display:flex; flex-direction:column; gap:0.4rem; align-items:center;">
+          <div class="tree-node" style="padding:0.5rem 1rem; font-size:0.9rem; border-color:var(--accent2);">CO<sub>2</sub></div>
+          <div class="tree-node" style="padding:0.5rem 1rem; font-size:0.9rem; border-color:var(--accent2);">AQI</div>
+          <div class="tree-node" style="padding:0.5rem 1rem; font-size:0.9rem; border-color:var(--accent2);">VOC</div>
+          <div class="tree-node" style="padding:0.5rem 1rem; font-size:0.9rem; border-color:var(--accent2);">PM2.5</div>
+          <div class="tree-node" style="padding:0.5rem 1rem; font-size:0.9rem; border-color:var(--accent2);">PM10</div>
+        </div>
+      </div>
+
+      <!-- Usability Group -->
+      <div style="text-align:center;">
+        <div class="tree-node glow-green" style="margin-bottom:0.75rem; font-size:1.1rem;">Usability (25%)</div>
+        <div style="color:var(--accent3); font-size:1.5rem; margin:0.3rem 0;">↓ ↓ ↓</div>
+        <div style="display:flex; flex-direction:column; gap:0.4rem; align-items:center;">
+          <div class="tree-node" style="padding:0.5rem 1rem; font-size:0.9rem; border-color:var(--accent3);">Seating</div>
+          <div class="tree-node" style="padding:0.5rem 1rem; font-size:0.9rem; border-color:var(--accent3);">Equipment</div>
+          <div class="tree-node" style="padding:0.5rem 1rem; font-size:0.9rem; border-color:var(--accent3);">A/V</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Level 4: Alternatives -->
+    <div class="tree-connector" style="font-size:1.5rem; margin:1rem 0; color:var(--accent4);">↓ ↓ ↓ ↓ ↓</div>
+    <div class="tree-level" style="justify-content:center; gap:0.75rem;">
+      <div class="tree-node glow-amber" style="padding:0.5rem 1rem; font-size:0.9rem;">Room 1</div>
+      <div class="tree-node glow-amber" style="padding:0.5rem 1rem; font-size:0.9rem;">Room 2</div>
+      <div class="tree-node glow-amber" style="padding:0.5rem 1rem; font-size:0.9rem;">Room 3</div>
+      <div class="tree-node glow-amber" style="padding:0.5rem 1rem; font-size:0.9rem;">Room 4</div>
+      <div class="tree-node glow-amber" style="padding:0.5rem 1rem; font-size:0.9rem;">Room 5</div>
+    </div>
+  </div>
+  <p style="text-align:center; font-size:1rem; margin-top:0.5rem; color:var(--muted);">Each sub-criterion contributes to its parent via local weights; final score aggregates through the hierarchy.</p>
+  <div class="slide-footer"><span>AHP Hierarchy</span><span>9 / 20</span></div>
+</div>
+
+<!-- ==================== SLIDE 12: AHP ENGINE ==================== -->
+<div class="slide" id="s12">
+  <span class="speaker-badge speaker-federico">Federico</span>
+  <h2>AHP &mdash; How It Works</h2>
+  <div class="two-col">
+    <div>
+      <ul>
+        <li><strong>Pairwise comparisons</strong> on Saaty 1&ndash;9 scale &mdash; intuitive for users</li>
+        <li><strong>Eigenvector method</strong> extracts priority weights from comparison matrices</li>
+        <li><strong>Consistency Ratio</strong> (CR &lt; 0.1) ensures logical coherence of preferences</li>
+        <li><strong>Weighted Sum</strong> aggregates criteria scores using hierarchy weights</li>
+        <li><strong>Two-phase</strong>: hard facility constraints &rarr; AHP scoring</li>
+      </ul>
+    </div>
+    <div class="card glow-purple">
+      <h3>5 Modular Components</h3>
+      <ul style="list-style:none; padding:0;">
+        <li style="font-size:1rem;"><code style="color:var(--accent2)">pairwise_matrix.py</code> &mdash; Matrix construction</li>
+        <li style="font-size:1rem;"><code style="color:var(--accent2)">eigenvector.py</code> &mdash; Weight extraction + CR</li>
+        <li style="font-size:1rem;"><code style="color:var(--accent2)">score_mapping.py</code> &mdash; Sensor &rarr; [0,1]</li>
+        <li style="font-size:1rem;"><code style="color:var(--accent2)">aggregation.py</code> &mdash; WSM / WPM options</li>
+        <li style="font-size:1rem;"><code style="color:var(--accent2)">ahp_engine.py</code> &mdash; Orchestrator</li>
+      </ul>
+    </div>
+  </div>
+  <div class="slide-footer"><span>AHP Engine</span><span>10 / 20</span></div>
+</div>
+
+<!-- ==================== SLIDE 13: DESIGN JUSTIFICATIONS (NEW) ==================== -->
+<div class="slide" id="s13">
+  <span class="speaker-badge speaker-filip">Filip</span>
+  <h2>Design Justifications &mdash; Key Decisions</h2>
+  <table style="font-size:1.05rem;">
+    <thead>
+      <tr><th>Decision</th><th>Chosen</th><th>Rejected</th><th>Justification</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong class="accent2">Sensor Protocol</strong></td>
+        <td><span class="tag tag-purple" style="margin:0;">MQTT</span></td>
+        <td style="color:var(--muted);">HTTP</td>
+        <td>Lightweight pub/sub, QoS levels, handles lossy connections, minimal overhead</td>
+      </tr>
+      <tr>
+        <td><strong class="accent">Database</strong></td>
+        <td><span class="tag tag-blue" style="margin:0;">MongoDB</span></td>
+        <td style="color:var(--muted);">PostgreSQL / InfluxDB</td>
+        <td>Schema flexibility for heterogeneous sensor data; async Motor driver for FastAPI</td>
+      </tr>
+      <tr>
+        <td><strong class="accent3">Network</strong></td>
+        <td><span class="tag tag-green" style="margin:0;">Ethernet</span></td>
+        <td style="color:var(--muted);">WiFi</td>
+        <td>Deterministic latency, no credential management, suitable for fixed installations</td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="slide-footer"><span>Justifications</span><span>11 / 20</span></div>
+</div>
+
+<!-- ==================== SLIDE 14: REST API ==================== -->
+<div class="slide" id="s12">
+  <span class="speaker-badge speaker-anthony">Anthony</span>
+  <h2>REST API &mdash; Why FastAPI</h2>
+  <div class="three-col">
+    <div class="card glow-blue">
+      <h3>Auto Swagger</h3>
+      <p>OpenAPI documentation generated from code &mdash; zero extra effort</p>
+    </div>
+    <div class="card glow-blue">
+      <h3>Async-Native</h3>
+      <p>Concurrent sensor queries via ASGI without thread-pool overhead</p>
+    </div>
+    <div class="card glow-blue">
+      <h3>Pydantic Models</h3>
+      <p>Typed request/response validation at the framework level</p>
+    </div>
+  </div>
+  <p style="margin-top:2.5rem; text-align:center; font-size:1.3rem;">Lightweight enough to run on a <strong>Raspberry Pi 4</strong>.</p>
+  <div class="slide-footer"><span>FastAPI</span><span>10 / 18</span></div>
+</div>
+
+<!-- ==================== SLIDE 13: API ENDPOINTS ==================== -->
+<div class="slide" id="s13">
+  <span class="speaker-badge speaker-anthony">Anthony</span>
+  <h2>REST API &mdash; Endpoints</h2>
+  <div class="two-col">
+    <div class="card glow-blue">
+      <h3>API1 &mdash; Input Data</h3>
+      <p style="font-size:1.05rem; margin-bottom:0.75rem;"><code style="color:var(--accent)">GET /sensors/{room}/{type}</code><br><span style="color:var(--muted)">Sensor readings with time range filtering</span></p>
+      <p style="font-size:1.05rem; margin-bottom:0.75rem;"><code style="color:var(--accent)">GET /rooms/{id}/facilities</code><br><span style="color:var(--muted)">Room metadata and equipment</span></p>
+      <p style="font-size:1.05rem;"><code style="color:var(--accent)">GET /calendar/events</code><br><span style="color:var(--muted)">Calendar events with time range filtering</span></p>
+    </div>
+    <div class="card glow-green">
+      <h3>API2 &mdash; DSS Results</h3>
+      <p style="font-size:1.05rem; margin-bottom:0.75rem;"><code style="color:var(--accent3)">POST /rank</code><br><span style="color:var(--muted)">User preferences & criteria weights as input</span></p>
+      <p style="font-size:1.05rem;"><span style="color:var(--muted)">Returns ranked rooms with overall scores, per-criterion breakdowns, current conditions, and facilities.</span></p>
+    </div>
+  </div>
+  <div class="slide-footer"><span>Endpoints</span><span>11 / 18</span></div>
+</div>
+
+<!-- ==================== SLIDE 14: SWAGGER ==================== -->
+<div class="slide" id="s14">
+  <span class="speaker-badge speaker-filip">Filip</span>
+  <h2>Swagger Documentation</h2>
+      <div class="screenshot-placeholder">
+    <img src="../screenshots%20presentation/swagger%20api.png" alt="Swagger UI documentation">
+    <small>Swagger UI at <code>/docs</code> &mdash; auto-generated by FastAPI</small>
+  </div>
+  <p style="margin-top:2rem; text-align:center; font-size:1.2rem;">Also accessible from the frontend via the <strong>"API Docs" tab</strong> &mdash; embedded Swagger UI for third-party developers.</p>
+  <div class="slide-footer"><span>Swagger</span><span>12 / 18</span></div>
+</div>
+
+<!-- ==================== SLIDE 15: UI1 ==================== -->
+<div class="slide dense ui1" id="s15">
+  <span class="speaker-badge speaker-filip">Filip</span>
+  <h2>UI1 &mdash; Room Selection Interface</h2>
+  <div class="two-col">
+    <div>
+      <h3>React 19 + Vite + Tailwind</h3>
+      <ul>
+        <li><strong>Saaty scale sliders</strong> for pairwise comparison between Comfort, Health, Usability</li>
+        <li><strong>Facility requirements</strong> &mdash; hard constraints (min seats, projector, computers, robots)</li>
+        <li><strong>Profile adjuster</strong> &mdash; override EU default thresholds per preference</li>
+        <li><strong>Ranked results</strong> with score breakdown per criterion</li>
+        <li><strong>Two-phase system</strong>: filter by requirements &rarr; AHP score remaining rooms</li>
+      </ul>
+    </div>
+    <div>
+      <div class="screenshot-placeholder large">
+        <img src="../screenshots%20presentation/UI1.png" alt="Room selection interface">
+        <small>Preference input + facility filter + ranking results</small>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer"><span>UI1</span><span>13 / 18</span></div>
+</div>
+
+<!-- ==================== SLIDE 16: UI2 ==================== -->
+<div class="slide dense" id="s16">
+  <span class="speaker-badge speaker-filip">Filip</span>
+  <h2>UI2 &mdash; Admin Monitoring Dashboard</h2>
+  <div class="two-col">
+    <div>
+      <h3>Grafana</h3>
+      <ul>
+        <li><strong>Native MongoDB</strong> connection &mdash; no custom dashboard code</li>
+        <li><strong>Real-time panels</strong> &mdash; sensor time-series, gauges, heatmaps</li>
+        <li><strong>Alert rules</strong> for threshold violations (e.g., CO<sub>2</sub> &gt; 1000 ppm)</li>
+        <li><strong>Versioned configs</strong> in <code>grafana/</code>, auto-provisioned via Docker</li>
+      </ul>
+    </div>
+    <div>
+      <div class="screenshot-placeholder full">
+        <img src="../screenshots%20presentation/grafana%20dashboard%20UI2.png" alt="Grafana monitoring dashboard">
+        <small>Sensor data over time, alerts, room monitoring</small>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer"><span>UI2</span><span>14 / 18</span></div>
+</div>
+
+<!-- ==================== SLIDE 17: DOCKER ==================== -->
+<div class="slide" id="s17">
+  <span class="speaker-badge speaker-anthont">Anthony</span>
+  <h2>Containerization &amp; Deployment</h2>
+  <div class="arch-flow" style="gap:1.25rem; margin:3rem 0;">
+    <div class="arch-box glow">
+      <div class="label">mongo:4.4</div>
+      <div class="name">MongoDB</div>
+      <div style="font-size:0.8rem; color:var(--muted); margin-top:0.3rem;">:27017</div>
+    </div>
+    <div class="arch-arrow">&harr;</div>
+    <div class="arch-box glow">
+      <div class="label">Python 3.11</div>
+      <div class="name">FastAPI</div>
+      <div style="font-size:0.8rem; color:var(--muted); margin-top:0.3rem;">:8000</div>
+    </div>
+    <div class="arch-arrow">&harr;</div>
+    <div class="arch-box glow-green">
+      <div class="label">Node 18</div>
+      <div class="name">React</div>
+      <div style="font-size:0.8rem; color:var(--muted); margin-top:0.3rem;">:5173</div>
+    </div>
+    <div style="margin-left:2rem;"></div>
+    <div class="arch-box glow-amber">
+      <div class="label">Monitoring</div>
+      <div class="name">Grafana</div>
+      <div style="font-size:0.8rem; color:var(--muted); margin-top:0.3rem;">:3000</div>
+    </div>
+  </div>
+  <div class="two-col" style="margin-top:1.5rem;">
+    <div>
+      <ul>
+        <li><strong>Private network</strong> &mdash; services isolated from host</li>
+        <li><strong>Health checks</strong> &mdash; backend waits for MongoDB readiness</li>
+      </ul>
+    </div>
+    <div>
+      <ul>
+        <li><strong>ARM-optimized</strong> Dockerfile for Raspberry Pi 4</li>
+        <li><strong>Non-root</strong> container user for security</li>
+      </ul>
+    </div>
+  </div>
+  <div class="slide-footer"><span>Docker</span><span>15 / 18</span></div>
+</div>
+
+<!-- ==================== SLIDE 18: JWT BONUS ==================== -->
+<div class="slide" id="s18">
+  <span class="speaker-badge speaker-federico">Federico</span>
+  <h2>Bonus &mdash; JWT Authentication</h2>
+  <div class="pipeline" style="gap:0.6rem; margin:3rem 0;">
+    <div class="pipeline-step glow">
+      <div class="step-label">Step 1</div>
+      <div class="step-name">POST /login<br><span style="font-size:0.8rem; color:var(--muted)">username + password</span></div>
+    </div>
+    <div class="arch-arrow">&xrarr;</div>
+    <div class="pipeline-step glow-purple">
+      <div class="step-label">Step 2</div>
+      <div class="step-name">Verify bcrypt<br><span style="font-size:0.8rem; color:var(--muted)">salted hash check</span></div>
+    </div>
+    <div class="arch-arrow">&xrarr;</div>
+    <div class="pipeline-step glow">
+      <div class="step-label">Step 3</div>
+      <div class="step-name">Issue JWT<br><span style="font-size:0.8rem; color:var(--muted)">HS256, 30 min expiry</span></div>
+    </div>
+    <div class="arch-arrow">&xrarr;</div>
+    <div class="pipeline-step glow-green">
+      <div class="step-label">Step 4</div>
+      <div class="step-name">Bearer token<br><span style="font-size:0.8rem; color:var(--muted)">on every request</span></div>
+    </div>
+  </div>
+  <p style="text-align:center; font-size:1.2rem; margin-top:1rem;">Axios interceptor automatically attaches the token &mdash; transparent to the user.</p>
+  <div class="slide-footer"><span>JWT</span><span>16 / 18</span></div>
+</div>
+
+
+
+<!-- ==================== SLIDE 19: THANK YOU ==================== -->
+<div class="slide title-slide" id="s19">
+  <h1>Thank you</h1>
+  <p class="subtitle" style="margin-bottom:2.5rem;">Questions?</p>
+  <div class="three-col" style="max-width:700px; margin:0 auto;">
+    <div style="text-align:center;">
+      <span class="tag tag-blue" style="font-size:1.1rem; padding:0.4rem 1.2rem;">Anthony</span>
+      <p style="font-size:0.95rem; margin-top:0.5rem;">Backend & DB</p>
+    </div>
+    <div style="text-align:center;">
+      <span class="tag tag-purple" style="font-size:1.1rem; padding:0.4rem 1.2rem;">Federico</span>
+      <p style="font-size:0.95rem; margin-top:0.5rem;">Algorithm & Data</p>
+    </div>
+    <div style="text-align:center;">
+      <span class="tag tag-green" style="font-size:1.1rem; padding:0.4rem 1.2rem;">Filip</span>
+      <p style="font-size:0.95rem; margin-top:0.5rem;">Frontend & UI</p>
+    </div>
+  </div>
+  <p class="meta" style="margin-top:3rem;">BPINFOR-124 &mdash; University of Luxembourg &mdash; January 2026</p>
+</div>
+
+<!-- ==================== NAVIGATION ==================== -->
+<script>
+  const slides = document.querySelectorAll('.slide');
+  let current = 0;
+  const progress = document.getElementById('progress');
+
+  function show(idx) {
+    if (idx < 0 || idx >= slides.length) return;
+    slides[current].classList.remove('active');
+    current = idx;
+    slides[current].classList.add('active');
+    progress.style.width = ((current / (slides.length - 1)) * 100) + '%';
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); show(current + 1); }
+    if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); show(current - 1); }
+    if (e.key === 'Home') { e.preventDefault(); show(0); }
+    if (e.key === 'End') { e.preventDefault(); show(slides.length - 1); }
+  });
+
+  document.addEventListener('click', (e) => {
+    if (e.clientX > window.innerWidth / 2) show(current + 1);
+    else show(current - 1);
+  });
+
+  // Touch support
+  let touchStartX = 0;
+  document.addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].screenX; });
+  document.addEventListener('touchend', (e) => {
+    const diff = e.changedTouches[0].screenX - touchStartX;
+    if (Math.abs(diff) > 50) { diff < 0 ? show(current + 1) : show(current - 1); }
+  });
+
+  // Fade out hints after first navigation
+  let hinted = false;
+  function hideHints() {
+    if (hinted) return;
+    hinted = true;
+    document.getElementById('navHint').classList.add('hidden');
+    document.getElementById('fsHint').classList.add('hidden');
+  }
+  document.addEventListener('keydown', hideHints, { once: false });
+  setTimeout(() => { document.getElementById('fsHint').classList.add('hidden'); }, 8000);
+
+  show(0);
+</script>
+
+</body>
+</html>

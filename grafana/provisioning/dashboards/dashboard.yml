@@ -1,0 +1,27 @@
+# Grafana Dashboard Provisioning
+# This file tells Grafana where to find dashboard JSON files
+
+apiVersion: 1
+
+providers:
+  # Main IoT Room Monitoring Dashboards
+  - name: 'IoT Room Monitoring'
+    orgId: 1
+    folder: 'IoT Rooms'
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 10
+    allowUiUpdates: true
+    options:
+      path: /var/lib/grafana/dashboards
+      foldersFromFilesStructure: true
+
+  # Default dashboards (if any)
+  - name: 'Default'
+    orgId: 1
+    folder: ''
+    type: file
+    disableDeletion: false
+    editable: true
+    options:
+      path: /var/lib/grafana/dashboards/default

@@ -1,0 +1,673 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {
+        "type": "testdata",
+        "uid": "testdata"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "center",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Status"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-background"
+                }
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "type": "value",
+                    "value": "Free",
+                    "options": {
+                      "color": "green"
+                    }
+                  },
+                  {
+                    "type": "value",
+                    "value": "Occupied",
+                    "options": {
+                      "color": "red"
+                    }
+                  },
+                  {
+                    "type": "value",
+                    "value": "Reserved",
+                    "options": {
+                      "color": "yellow"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Occupancy"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percent"
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-background"
+                }
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "yellow",
+                      "value": 50
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": ["sum"],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": false,
+            "displayName": "Room"
+          }
+        ]
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "testdata",
+            "uid": "testdata"
+          },
+          "refId": "A",
+          "scenarioId": "csv_metric_values",
+          "csvContent": "Room,Status,Current Activity,Occupancy,Time Until Free,Capacity\nMSA 4.450,Free,None,0,Now,62\nMSA 4.470,Occupied,Lecture,85,45 min,23\nMSA 4.490,Free,None,0,Now,30\nMSA 3.360,Reserved,Meeting,0,30 min,40\nMSA 3.380,Free,None,0,Now,25\nMSA 3.400,Occupied,Workshop,70,90 min,35\nMSA 2.280,Free,None,0,Now,50\nMSA 2.300,Occupied,Study Group,40,60 min,20\nMSA 1.190,Free,None,0,Now,45\nMSA 1.210,Reserved,Lab Session,0,15 min,28"
+        }
+      ],
+      "title": "Room Availability - Real-Time Status",
+      "type": "table",
+      "description": "Current availability status of all rooms. Green=Free, Yellow=Reserved, Red=Occupied."
+    },
+    {
+      "datasource": {
+        "type": "testdata",
+        "uid": "testdata"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Priority"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-background"
+                }
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "type": "value",
+                    "value": "High",
+                    "options": {
+                      "color": "red"
+                    }
+                  },
+                  {
+                    "type": "value",
+                    "value": "Medium",
+                    "options": {
+                      "color": "yellow"
+                    }
+                  },
+                  {
+                    "type": "value",
+                    "value": "Low",
+                    "options": {
+                      "color": "green"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 0,
+        "y": 10
+      },
+      "id": 2,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": ["sum"],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": false,
+            "displayName": "Start Time"
+          }
+        ]
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "testdata",
+            "uid": "testdata"
+          },
+          "refId": "A",
+          "scenarioId": "csv_metric_values",
+          "csvContent": "Event,Room,Start Time,Duration,Attendees,Priority\nAI Workshop,MSA 4.470,14:00,2h,22,High\nTeam Meeting,MSA 3.360,14:30,1h,8,Medium\nLab Session,MSA 1.210,15:00,3h,25,High\nStudy Group,MSA 2.300,15:30,1.5h,6,Low\nProject Review,MSA 3.400,16:00,2h,15,Medium\nRobotics Demo,MSA 4.490,16:30,1h,18,Medium\nExam Review,MSA 4.450,17:00,2h,50,High\nOffice Hours,MSA 3.380,17:30,1h,5,Low\nGuest Lecture,MSA 2.280,18:00,1.5h,40,High\nHackathon,MSA 1.190,18:30,4h,35,High"
+        }
+      ],
+      "title": "Upcoming Calendar Events",
+      "type": "table",
+      "description": "Scheduled events and reservations across all rooms. Sorted by start time."
+    },
+    {
+      "datasource": {
+        "type": "testdata",
+        "uid": "testdata"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "Count",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "tooltip": false,
+              "viz": false,
+              "legend": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 12,
+        "y": 10
+      },
+      "id": 3,
+      "options": {
+        "barRadius": 0,
+        "barWidth": 0.8,
+        "fullHighlight": false,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "orientation": "horizontal",
+        "showValue": "always",
+        "stacking": "none",
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        },
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "testdata",
+            "uid": "testdata"
+          },
+          "refId": "Projectors",
+          "scenarioId": "csv_metric_values",
+          "csvContent": "room,value\nMSA 4.450,1\nMSA 4.470,1\nMSA 4.490,1\nMSA 3.360,1\nMSA 3.380,1\nMSA 3.400,1\nMSA 2.280,0\nMSA 2.300,1\nMSA 1.190,1\nMSA 1.210,0",
+          "alias": "Projectors"
+        },
+        {
+          "datasource": {
+            "type": "testdata",
+            "uid": "testdata"
+          },
+          "refId": "Computers",
+          "scenarioId": "csv_metric_values",
+          "csvContent": "room,value\nMSA 4.450,0\nMSA 4.470,20\nMSA 4.490,10\nMSA 3.360,0\nMSA 3.380,15\nMSA 3.400,25\nMSA 2.280,0\nMSA 2.300,12\nMSA 1.190,8\nMSA 1.210,0",
+          "alias": "Computers",
+          "hide": false
+        },
+        {
+          "datasource": {
+            "type": "testdata",
+            "uid": "testdata"
+          },
+          "refId": "Robots",
+          "scenarioId": "csv_metric_values",
+          "csvContent": "room,value\nMSA 4.450,0\nMSA 4.470,1\nMSA 4.490,0\nMSA 3.360,0\nMSA 3.380,0\nMSA 3.400,1\nMSA 2.280,0\nMSA 2.300,0\nMSA 1.190,1\nMSA 1.210,0",
+          "alias": "Robots",
+          "hide": false
+        }
+      ],
+      "title": "Facility Breakdown by Room",
+      "type": "barchart",
+      "description": "Equipment and facilities available in each room (projectors, computers, robots)."
+    },
+    {
+      "datasource": {
+        "type": "testdata",
+        "uid": "testdata"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 30
+              },
+              {
+                "color": "orange",
+                "value": 50
+              },
+              {
+                "color": "red",
+                "value": 60
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 19
+      },
+      "id": 4,
+      "options": {
+        "displayMode": "gradient",
+        "minVizHeight": 10,
+        "minVizWidth": 0,
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "values": false,
+          "calcs": ["lastNotNull"],
+          "fields": ""
+        },
+        "showUnfilled": true,
+        "text": {
+          "valueSize": 16
+        }
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "testdata",
+            "uid": "testdata"
+          },
+          "refId": "A",
+          "scenarioId": "csv_metric_values",
+          "csvContent": "room,capacity\nMSA 4.450,62\nMSA 4.470,23\nMSA 4.490,30\nMSA 3.360,40\nMSA 3.380,25\nMSA 3.400,35\nMSA 2.280,50\nMSA 2.300,20\nMSA 1.190,45\nMSA 1.210,28"
+        }
+      ],
+      "title": "Seating Capacity Visualization",
+      "type": "bargauge",
+      "description": "Maximum seating capacity for each room. Color-coded by size (green=small, red=large lecture halls)."
+    },
+    {
+      "datasource": {
+        "type": "testdata",
+        "uid": "testdata"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "tooltip": false,
+              "viz": false,
+              "legend": false
+            }
+          },
+          "mappings": []
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 12,
+        "y": 19
+      },
+      "id": 5,
+      "options": {
+        "displayLabels": ["name", "percent"],
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true,
+          "values": ["value"]
+        },
+        "pieType": "pie",
+        "reduceOptions": {
+          "values": false,
+          "calcs": ["lastNotNull"],
+          "fields": ""
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "testdata",
+            "uid": "testdata"
+          },
+          "refId": "A",
+          "scenarioId": "csv_metric_values",
+          "csvContent": "status,count\nFree,4\nOccupied,4\nReserved,2"
+        }
+      ],
+      "title": "Availability Distribution",
+      "type": "piechart",
+      "description": "Distribution of room availability status."
+    },
+    {
+      "datasource": {
+        "type": "testdata",
+        "uid": "testdata"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Avg Utilization"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percent"
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "red",
+                      "value": null
+                    },
+                    {
+                      "color": "yellow",
+                      "value": 40
+                    },
+                    {
+                      "color": "green",
+                      "value": 60
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 18,
+        "y": 19
+      },
+      "id": 6,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "values": false,
+          "calcs": ["lastNotNull"],
+          "fields": ""
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "testdata",
+            "uid": "testdata"
+          },
+          "refId": "Total Rooms",
+          "scenarioId": "csv_metric_values",
+          "csvContent": "metric,value\nTotal Rooms,10",
+          "alias": "Total Rooms"
+        },
+        {
+          "datasource": {
+            "type": "testdata",
+            "uid": "testdata"
+          },
+          "refId": "Rooms Free",
+          "scenarioId": "csv_metric_values",
+          "csvContent": "metric,value\nRooms Free,4",
+          "alias": "Rooms Free",
+          "hide": false
+        },
+        {
+          "datasource": {
+            "type": "testdata",
+            "uid": "testdata"
+          },
+          "refId": "Total Events",
+          "scenarioId": "csv_metric_values",
+          "csvContent": "metric,value\nTotal Events Today,10",
+          "alias": "Events Today",
+          "hide": false
+        },
+        {
+          "datasource": {
+            "type": "testdata",
+            "uid": "testdata"
+          },
+          "refId": "Avg Utilization",
+          "scenarioId": "csv_metric_values",
+          "csvContent": "metric,value\nAvg Utilization,68",
+          "alias": "Avg Utilization",
+          "hide": false
+        }
+      ],
+      "title": "Facility Stats",
+      "type": "stat",
+      "description": "Overall facility statistics and room utilization metrics."
+    }
+  ],
+  "refresh": "30s",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": ["iot", "facilities", "calendar", "availability"],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "IoT Room Facilities & Calendar",
+  "uid": "iot-facilities-calendar",
+  "version": 1,
+  "weekStart": ""
+}

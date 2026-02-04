@@ -1,0 +1,38 @@
+[Unit]
+Description=IoT Room Selection Vision AI Reader
+Documentation=https://github.com/your-org/iot-room-selection
+After=network.target mosquitto.service
+Wants=mosquitto.service
+
+[Service]
+Type=simple
+User=pi
+Group=pi
+WorkingDirectory=/home/pi/iot
+ExecStart=/home/pi/iot/venv/bin/python /home/pi/iot/scripts/vision_ai_reader.py
+Restart=always
+RestartSec=10
+
+# Environment variables
+Environment=MQTT_BROKER=localhost
+Environment=MQTT_PORT=1883
+Environment=ROOM_NAME=Room_1
+Environment=SERIAL_PORT=/dev/ttyAMA0
+Environment=SERIAL_BAUD=115200
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=vision-ai
+
+# Security hardening
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=read-only
+PrivateTmp=true
+
+# Allow serial port access
+SupplementaryGroups=dialout
+
+[Install]
+WantedBy=multi-user.target

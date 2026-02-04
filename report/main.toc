@@ -1,0 +1,37 @@
+\contentsline {section}{\numberline {1}Introduction}{4}{section.1}%
+\contentsline {section}{\numberline {2}Team Organization}{4}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Role Assignment}{4}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Milestones}{4}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}Gantt Chart}{5}{subsection.2.3}%
+\contentsline {section}{\numberline {3}System Architecture}{6}{section.3}%
+\contentsline {subsection}{\numberline {3.1}High-Level Overview}{6}{subsection.3.1}%
+\contentsline {section}{\numberline {4}Communication Protocols}{7}{section.4}%
+\contentsline {section}{\numberline {5}Database Design}{8}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Why MongoDB}{8}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}Collections and Indexing}{8}{subsection.5.2}%
+\contentsline {section}{\numberline {6}Decision Criteria: EU EN~16798-1}{8}{section.6}%
+\contentsline {section}{\numberline {7}AHP Algorithm}{9}{section.7}%
+\contentsline {subsection}{\numberline {7.1}Why AHP}{9}{subsection.7.1}%
+\contentsline {subsection}{\numberline {7.2}Three-Level Hierarchy}{9}{subsection.7.2}%
+\contentsline {subsection}{\numberline {7.3}Implementation}{9}{subsection.7.3}%
+\contentsline {subsection}{\numberline {7.4}Consistency Checking}{10}{subsection.7.4}%
+\contentsline {section}{\numberline {8}Hardware Architecture \& Deployment}{10}{section.8}%
+\contentsline {subsection}{\numberline {8.1}Platform Selection}{10}{subsection.8.1}%
+\contentsline {subsection}{\numberline {8.2}Sensor Specifications \& Wiring}{11}{subsection.8.2}%
+\contentsline {subsection}{\numberline {8.3}Vision AI Integration for Occupancy Detection}{12}{subsection.8.3}%
+\contentsline {subsection}{\numberline {8.4}Data Collection Architecture}{12}{subsection.8.4}%
+\contentsline {subsection}{\numberline {8.5}Power \& Deployment Considerations}{14}{subsection.8.5}%
+\contentsline {section}{\numberline {9}REST API Design}{14}{section.9}%
+\contentsline {subsection}{\numberline {9.1}Why FastAPI}{14}{subsection.9.1}%
+\contentsline {subsection}{\numberline {9.2}Endpoint Structure}{14}{subsection.9.2}%
+\contentsline {section}{\numberline {10}Frontend -- End-User Interface (UI1)}{16}{section.10}%
+\contentsline {subsection}{\numberline {10.1}Technology Choices}{16}{subsection.10.1}%
+\contentsline {subsection}{\numberline {10.2}User Flow}{16}{subsection.10.2}%
+\contentsline {section}{\numberline {11}Admin Dashboard (UI2) -- Grafana}{17}{section.11}%
+\contentsline {section}{\numberline {12}Authentication (Bonus)}{18}{section.12}%
+\contentsline {section}{\numberline {13}Containerization and Deployment}{18}{section.13}%
+\contentsline {subsection}{\numberline {13.1}Docker Compose Architecture}{18}{subsection.13.1}%
+\contentsline {section}{\numberline {14}Testing}{19}{section.14}%
+\contentsline {subsection}{\numberline {14.1}AHP Unit Tests}{19}{subsection.14.1}%
+\contentsline {subsection}{\numberline {14.2}Backend Integration Tests}{19}{subsection.14.2}%
+\contentsline {section}{\numberline {15}Conclusion}{19}{section.15}%

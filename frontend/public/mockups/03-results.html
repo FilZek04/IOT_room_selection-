@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Room Rankings - IoT Room Selection</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f7fafc;
+            padding: 20px;
+        }
+
+        .header {
+            background: white;
+            padding: 20px 40px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        h1 {
+            font-size: 1.875rem;
+            color: #1a202c;
+        }
+
+        .back-btn {
+            background: #e2e8f0;
+            color: #4a5568;
+            padding: 10px 20px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .results-summary {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .summary-card {
+            text-align: center;
+            padding: 15px;
+            background: #f7fafc;
+            border-radius: 8px;
+        }
+
+        .summary-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .summary-label {
+            font-size: 0.875rem;
+            color: #718096;
+            margin-top: 5px;
+        }
+
+        .table-container {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: #667eea;
+            color: white;
+        }
+
+        th {
+            padding: 16px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        th.center {
+            text-align: center;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid #e2e8f0;
+            transition: background 0.2s ease;
+        }
+
+        tbody tr:hover {
+            background: #f7fafc;
+        }
+
+        td {
+            padding: 16px;
+            color: #4a5568;
+        }
+
+        .rank-badge {
+            display: inline-block;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #667eea;
+            color: white;
+            font-weight: 700;
+            text-align: center;
+            line-height: 32px;
+        }
+
+        .rank-badge.gold {
+            background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+        }
+
+        .rank-badge.silver {
+            background: linear-gradient(135deg, #d7d2cc 0%, #304352 100%);
+        }
+
+        .rank-badge.bronze {
+            background: linear-gradient(135deg, #ed6ea0 0%, #ec8c69 100%);
+        }
+
+        .score-bar-container {
+            width: 100%;
+            background: #e2e8f0;
+            border-radius: 4px;
+            height: 8px;
+            overflow: hidden;
+        }
+
+        .score-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #48bb78 0%, #38a169 100%);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .score-value {
+            font-weight: 600;
+            color: #38a169;
+            font-size: 0.875rem;
+            margin-bottom: 4px;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .status-badge.good {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .status-badge.warning {
+            background: #feebc8;
+            color: #744210;
+        }
+
+        .status-badge.bad {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+
+        .facilities {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .facility-icon {
+            width: 24px;
+            height: 24px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .expand-btn {
+            background: #e2e8f0;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #4a5568;
+        }
+
+        .expand-btn:hover {
+            background: #cbd5e0;
+        }
+
+        .breakdown-row {
+            display: none;
+            background: #f7fafc;
+        }
+
+        .breakdown-content {
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .breakdown-item {
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .breakdown-label {
+            font-size: 0.75rem;
+            color: #718096;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .breakdown-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2d3748;
+        }
+
+        @media (max-width: 768px) {
+            .breakdown-content {
+                grid-template-columns: 1fr;
+            }
+
+            table {
+                font-size: 0.875rem;
+            }
+
+            td, th {
+                padding: 10px;
+            }
+        }
+    </style>
+    <script>
+        function toggleBreakdown(id) {
+            const row = document.getElementById('breakdown-' + id);
+            row.style.display = row.style.display === 'table-row' ? 'none' : 'table-row';
+        }
+    </script>
+</head>
+<body>
+    <div class="header">
+        <h1>🏆 Room Rankings</h1>
+        <a href="02-preferences.html" class="back-btn">← Adjust Preferences</a>
+    </div>
+
+    <div class="container">
+        <div class="results-summary">
+            <div class="summary-grid">
+                <div class="summary-card">
+                    <div class="summary-value">10</div>
+                    <div class="summary-label">Rooms Evaluated</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-value">0.05</div>
+                    <div class="summary-label">Consistency Ratio</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-value">Room 2</div>
+                    <div class="summary-label">Best Match</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-value">92%</div>
+                    <div class="summary-label">Top Score</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th class="center">Rank</th>
+                        <th>Room Name</th>
+                        <th>Overall Score</th>
+                        <th class="center">Temp</th>
+                        <th class="center">CO2</th>
+                        <th class="center">Humidity</th>
+                        <th>Facilities</th>
+                        <th class="center">Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Rank 1 -->
+                    <tr>
+                        <td style="text-align: center;">
+                            <span class="rank-badge gold">1</span>
+                        </td>
+                        <td><strong>Room 2</strong></td>
+                        <td>
+                            <div class="score-value">92%</div>
+                            <div class="score-bar-container">
+                                <div class="score-bar" style="width: 92%;"></div>
+                            </div>
+                        </td>
+                        <td style="text-align: center;">
+                            <span class="status-badge good">✓ 23°C</span>
+                        </td>
+                        <td style="text-align: center;">
+                            <span class="status-badge good">✓ 695</span>
+                        </td>
+                        <td style="text-align: center;">
+                            <span class="status-badge good">✓ 50%</span>
+                        </td>
+                        <td>
+                            <div class="facilities">
+                                <span class="facility-icon" title="Projector">📽️</span>
+                                <span class="facility-icon" title="20 Computers">💻</span>
+                                <span class="facility-icon" title="Robots">🤖</span>
+                                <span style="font-size: 0.875rem; color: #718096;">23 seats</span>
+                            </div>
+                        </td>
+                        <td style="text-align: center;">
+                            <button class="expand-btn" onclick="toggleBreakdown(1)">
+                                Show ▼
+                            </button>
+                        </td>
+                    </tr>
+                    <tr id="breakdown-1" class="breakdown-row">
+                        <td colspan="8">
+                            <div class="breakdown-content">
+                                <div class="breakdown-item">
+                                    <div class="breakdown-label">Comfort Score</div>
+                                    <div class="breakdown-value">89%</div>
+                                </div>
+                                <div class="breakdown-item">
+                                    <div class="breakdown-label">Health Score</div>
+                                    <div class="breakdown-value">95%</div>
+                                </div>
+                                <div class="breakdown-item">
+                                    <div class="breakdown-label">Usability Score</div>
+                                    <div class="breakdown-value">91%</div>
+                                </div>
+                                <div class="breakdown-item">
+                                    <div class="breakdown-label">Temperature</div>
+                                    <div class="breakdown-value">23.0°C</div>
+                                </div>
+                                <div class="breakdown-item">
+                                    <div class="breakdown-label">Air Quality</div>
+                                    <div class="breakdown-value">25.1 AQI</div>
+                                </div>
+                                <div class="breakdown-item">
+                                    <div class="breakdown-label">VOC</div>
+                                    <div class="breakdown-value">249.9 ppb</div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Rank 2 -->
+                    <tr>
+                        <td style="text-align: center;">
+                            <span class="rank-badge silver">2</span>
+                        </td>
+                        <td><strong>Room 3</strong></td>
+                        <td>
+                            <div class="score-value">88%</div>
+                            <div class="score-bar-container">
+                                <div class="score-bar" style="width: 88%;"></div>
+                            </div>
+                        </td>
+                        <td style="text-align: center;">
+                            <span class="status-badge good">✓ 23°C</span>
+                        </td>
+                        <td style="text-align: center;">
+                            <span class="status-badge good">✓ 702</span>
+                        </td>
+                        <td style="text-align: center;">
+                            <span class="status-badge good">✓ 50%</span>
+                        </td>
+                        <td>
+                            <div class="facilities">
+                                <span class="facility-icon" title="Projector">📽️</span>
+                                <span class="facility-icon" title="10 Computers">💻</span>
+                                <span style="font-size: 0.875rem; color: #718096;">30 seats</span>
+                            </div>
+                        </td>
+                        <td style="text-align: center;">
+                            <button class="expand-btn" onclick="toggleBreakdown(2)">
+                                Show ▼
+                            </button>
+                        </td>
+                    </tr>
+                    <tr id="breakdown-2" class="breakdown-row">
+                        <td colspan="8">
+                            <div class="breakdown-content">
+                                <div class="breakdown-item">
+                                    <div class="breakdown-label">Comfort Score</div>
+                                    <div class="breakdown-value">87%</div>
+                                </div>
+                                <div class="breakdown-item">
+                                    <div class="breakdown-label">Health Score</div>
+                                    <div class="breakdown-value">90%</div>
+                                </div>
+                                <div class="breakdown-item">
+                                    <div class="breakdown-label">Usability Score</div>
+                                    <div class="breakdown-value">86%</div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Rank 3 -->
+                    <tr>
+                        <td style="text-align: center;">
+                            <span class="rank-badge bronze">3</span>
+                        </td>
+                        <td><strong>Room 1</strong></td>
+                        <td>
+                            <div class="score-value">85%</div>
+                            <div class="score-bar-container">
+                                <div class="score-bar" style="width: 85%;"></div>
+                            </div>
+                        </td>
+                        <td style="text-align: center;">
+                            <span class="status-badge good">✓ 23°C</span>
+                        </td>
+                        <td style="text-align: center;">
+                            <span class="status-badge good">✓ 703</span>
+                        </td>
+                        <td style="text-align: center;">
+                            <span class="status-badge good">✓ 50%</span>
+                        </td>
+                        <td>
+                            <div class="facilities">
+                                <span class="facility-icon" title="Projector">📽️</span>
+                                <span style="font-size: 0.875rem; color: #718096;">62 seats</span>
+                            </div>
+                        </td>
+                        <td style="text-align: center;">
+                            <button class="expand-btn" onclick="toggleBreakdown(3)">
+                                Show ▼
+                            </button>
+                        </td>
+                    </tr>
+                    <tr id="breakdown-3" class="breakdown-row">
+                        <td colspan="8">
+                            <div class="breakdown-content">
+                                <div class="breakdown-item">
+                                    <div class="breakdown-label">Comfort Score</div>
+                                    <div class="breakdown-value">84%</div>
+                                </div>
+                                <div class="breakdown-item">
+                                    <div class="breakdown-label">Health Score</div>
+                                    <div class="breakdown-value">88%</div>
+                                </div>
+                                <div class="breakdown-item">
+                                    <div class="breakdown-label">Usability Score</div>
+                                    <div class="breakdown-value">83%</div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Rank 4 -->
+                    <tr>
+                        <td style="text-align: center;">
+                            <span class="rank-badge">4</span>
+                        </td>
+                        <td><strong>Room 4</strong></td>
+                        <td>
+                            <div class="score-value">82%</div>
+                            <div class="score-bar-container">
+                                <div class="score-bar" style="width: 82%;"></div>
+                            </div>
+                        </td>
+                        <td style="text-align: center;">
+                            <span class="status-badge good">✓ 23°C</span>
+                        </td>
+                        <td style="text-align: center;">
+                            <span class="status-badge warning">⚠ 754</span>
+                        </td>
+                        <td style="text-align: center;">
+                            <span class="status-badge good">✓ 49%</span>
+                        </td>
+                        <td>
+                            <div class="facilities">
+                                <span class="facility-icon" title="Projector">📽️</span>
+                                <span style="font-size: 0.875rem; color: #718096;">25 seats</span>
+                            </div>
+                        </td>
+                        <td style="text-align: center;">
+                            <button class="expand-btn" onclick="toggleBreakdown(4)">
+                                Show ▼
+                            </button>
+                        </td>
+                    </tr>
+                    <tr id="breakdown-4" class="breakdown-row">
+                        <td colspan="8">
+                            <div class="breakdown-content">
+                                <div class="breakdown-item">
+                                    <div class="breakdown-label">Comfort Score</div>
+                                    <div class="breakdown-value">81%</div>
+                                </div>
+                                <div class="breakdown-item">
+                                    <div class="breakdown-label">Health Score</div>
+                                    <div class="breakdown-value">79%</div>
+                                </div>
+                                <div class="breakdown-item">
+                                    <div class="breakdown-label">Usability Score</div>
+                                    <div class="breakdown-value">85%</div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Rank 5 -->
+                    <tr>
+                        <td style="text-align: center;">
+                            <span class="rank-badge">5</span>
+                        </td>
+                        <td><strong>Room 5</strong></td>
+                        <td>
+                            <div class="score-value">78%</div>
+                            <div class="score-bar-container">
+                                <div class="score-bar" style="width: 78%;"></div>
+                            </div>
+                        </td>
+                        <td style="text-align: center;">
+                            <span class="status-badge warning">⚠ 25°C</span>
+                        </td>
+                        <td style="text-align: center;">
+                            <span class="status-badge good">✓ 698</span>
+                        </td>
+                        <td style="text-align: center;">
+                            <span class="status-badge good">✓ 51%</span>
+                        </td>
+                        <td>
+                            <div class="facilities">
+                                <span class="facility-icon" title="Projector">📽️</span>
+                                <span style="font-size: 0.875rem; color: #718096;">18 seats</span>
+                            </div>
+                        </td>
+                        <td style="text-align: center;">
+                            <button class="expand-btn" onclick="toggleBreakdown(5)">
+                                Show ▼
+                            </button>
+                        </td>
+                    </tr>
+                    <tr id="breakdown-5" class="breakdown-row">
+                        <td colspan="8">
+                            <div class="breakdown-content">
+                                <div class="breakdown-item">
+                                    <div class="breakdown-label">Comfort Score</div>
+                                    <div class="breakdown-value">75%</div>
+                                </div>
+                                <div class="breakdown-item">
+                                    <div class="breakdown-label">Health Score</div>
+                                    <div class="breakdown-value">82%</div>
+                                </div>
+                                <div class="breakdown-item">
+                                    <div class="breakdown-label">Usability Score</div>
+                                    <div class="breakdown-value">76%</div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
